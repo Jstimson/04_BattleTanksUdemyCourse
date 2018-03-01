@@ -1,4 +1,4 @@
-// Udemy Tutorial by Ben Tristam, referenced and edited by student John Stimson
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -17,8 +17,10 @@ class BATTLETANK_API ATankAIController : public AAIController
 public:
 	virtual void BeginPlay() override;
 
+	virtual void Tick(float DeltaSeconds) override;
+
 private:
 	ATank* GetControlledTank() const;
+
 	ATank* GetPlayerTank() const;
-	
 };
