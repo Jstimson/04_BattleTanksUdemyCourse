@@ -6,10 +6,17 @@
 
 void UTankMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed)
 {
-	auto Time = GetWorld()->GetTimeSeconds();
-	auto TankName = GetOwner()->GetName();
-	auto MoveVelocityString = MoveVelocity.ToString();
-	UE_LOG(LogTemp, Warning, TEXT("%s: Request Direct Time for %s"), *MoveVelocityString, *TankName);
+	auto TankForward = GetOwner()->GetActorForwardVector().GetSafeNormal();
+	auto AIForewardIntention = MoveVelocity.GetSafeNormal();
+
+	auto ForwardThrow = FVector::DotProduct(TankForward, AIForewardIntention);
+	IntendMoveForeward(ForwardThrow);
+
+	auto TurnRightThrow = FVector::CrossProduct(TankForward, AIForewardIntention).Z;
+	IntendMoveTurnRight(TurnRightThrow);
+	//auto Time = GetWorld()->GetTimeSeconds();
+	//auto TankName = GetOwner()->GetName();
+	//UE_LOG(LogTemp, Warning, TEXT("%s: Request Direct Time for %s"), *MoveVelocityString, *TankName);
 }
 
 void UTankMovementComponent::Initialize(UTankTrack* LeftTrackToSet, UTankTrack* RightTrackToSet)
@@ -23,7 +30,6 @@ void UTankMovementComponent::IntendMoveForeward(float Throw)
 	if (!LeftTrack || !RightTrack) { return; }
 	LeftTrack->SetThrottle(Throw);
 	RightTrack->SetThrottle(Throw);
-	//TODO prevent double speed by using both controls sets
 }
 
 void UTankMovementComponent::IntendMoveTurnRight(float Throw)
@@ -31,6 +37,5 @@ void UTankMovementComponent::IntendMoveTurnRight(float Throw)
 	if (!LeftTrack || !RightTrack) { return; }
 	LeftTrack->SetThrottle(Throw);
 	RightTrack->SetThrottle(-Throw);
-	//TODO prevent double speed by using both controls sets
 }
 

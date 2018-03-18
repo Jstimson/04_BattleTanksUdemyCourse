@@ -26,19 +26,20 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
-	UFUNCTION(BlueprintCallable, Category = Setup)
+	UFUNCTION(BlueprintCallable, Category = "Setup")
 	void SetBarrelReference(UTankBarrel* BarrelToSet);
 
-	UFUNCTION(BlueprintCallable, Category = Setup)
+	UFUNCTION(BlueprintCallable, Category = "Setup")
 	void SetTurretReference(UTankTurret* TurretToSet);
 
-	UFUNCTION(BlueprintCallable, Category = Fireing)
+	UFUNCTION(BlueprintCallable, Category = "Fireing")
 	void Fire();
 
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Aiming")
 	UTankAimingComponent* TankAimingComponent = nullptr;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Movement)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
 	UTankMovementComponent* TankMovementComponent = nullptr;
 
 private:
