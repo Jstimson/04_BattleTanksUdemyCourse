@@ -1,5 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// Copyright John Stimson
 #include "BattleTank.h"
 #include "TankTrack.h"
 #include "TankMovementComponent.h"
@@ -14,9 +13,6 @@ void UTankMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool
 
 	auto TurnRightThrow = FVector::CrossProduct(TankForward, AIForewardIntention).Z;
 	IntendMoveTurnRight(TurnRightThrow);
-	//auto Time = GetWorld()->GetTimeSeconds();
-	//auto TankName = GetOwner()->GetName();
-	//UE_LOG(LogTemp, Warning, TEXT("%s: Request Direct Time for %s"), *MoveVelocityString, *TankName);
 }
 
 void UTankMovementComponent::Initialize(UTankTrack* LeftTrackToSet, UTankTrack* RightTrackToSet)
