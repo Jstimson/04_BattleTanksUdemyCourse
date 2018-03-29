@@ -24,6 +24,8 @@ class BATTLETANK_API UTankAimingComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
+	virtual void BeginPlay() override;
+	
 	// Sets default values for this component's properties
 	UTankAimingComponent();
 
@@ -43,6 +45,12 @@ protected:
 	EFiringState FiringState = EFiringState::Reloading;
 
 private:
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+
+	bool IsBarrelMoving();
+
+	FVector AimDirection;
+		
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 	float LaunchSpeed = 4000; // sensible projectile speed
 
