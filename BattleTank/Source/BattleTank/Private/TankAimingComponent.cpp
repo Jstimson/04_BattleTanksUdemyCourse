@@ -21,7 +21,11 @@ void UTankAimingComponent::BeginPlay()
 
 void UTankAimingComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
-	if((GetWorld()->GetTimeSeconds() - LastFireTime) < RelodTimeInSeconds)
+	if (RoundsLeft <= 0)
+	{
+		FiringState = EFiringState::OutOfAmmo;
+	}
+	else if((GetWorld()->GetTimeSeconds() - LastFireTime) < RelodTimeInSeconds)
 	{
 		FiringState = EFiringState::Reloading;
 	}
@@ -33,6 +37,16 @@ void UTankAimingComponent::TickComponent(float DeltaTime, enum ELevelTick TickTy
 	{
 		FiringState = EFiringState::Locked;
 	}
+}
+
+EFiringState UTankAimingComponent::GetFiringState() const
+{
+	return FiringState;
+}
+
+int UTankAimingComponent::GetRoundsLeft() const
+{
+	return RoundsLeft;
 }
 
 void UTankAimingComponent::Initialize(UTankBarrel* BarrelToSet, UTankTurret* TurretToSet)
@@ -62,6 +76,7 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 	//work out difference between current barrel rotation and elevation
 	auto BarrelRotator = Barrel->GetForwardVector().Rotation();
 	auto AimAsRotator = AimDirection.Rotation();
+
 	auto DeltaRotator = AimAsRotator - BarrelRotator;
 
 	Barrel->Elevate(DeltaRotator.Pitch);
@@ -75,19 +90,27 @@ void UTankAimingComponent::MoveTurretTowards(FVector AimDirection)
 	auto AimAsRotator = AimDirection.Rotation();
 	auto DeltaRotator = AimAsRotator - TurretRotator;
 
-	Turret->Rotate(DeltaRotator.Yaw);
+	if (FMath::Abs(DeltaRotator.Yaw) < 180)
+	{
+		Turret->Rotate(DeltaRotator.Yaw);
+	}
+	else
+	{
+		Turret->Rotate(-DeltaRotator.Yaw);
+	}
 }
 
 void UTankAimingComponent::Fire()
 {
-	
-	if (FiringState != EFiringState::Reloading)
+	if (RoundsLeft <= 0) { return; }
+	if (FiringState == EFiringState::Locked || FiringState == EFiringState::Aiming)
 	{
 		if (!ensure(Barrel)) { return; }
 		if (!ensure(ProjectileBlueprint)) { return; }
 		auto Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileBlueprint, Barrel->GetSocketLocation(FName("BarrelEnd")), Barrel->GetSocketRotation(FName("BarrelEnd")));
 		Projectile->LaunchProjectile(LaunchSpeed);
 		LastFireTime = GetWorld()->GetTimeSeconds();
+		RoundsLeft--;
 	}
 }
 
