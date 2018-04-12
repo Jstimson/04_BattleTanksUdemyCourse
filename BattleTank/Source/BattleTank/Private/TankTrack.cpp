@@ -15,9 +15,6 @@ void UTankTrack::BeginPlay()
 
 void UTankTrack::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
-	//auto Time = GetWorld()->GetTimeSeconds();
-	//auto TankName = GetOwner()->GetName();
-	//UE_LOG(LogTemp, Warning, TEXT("Track Ticking"));
 	DriveTrack();
 	ApplySidewaysForce();
 	CurrentThrottle = 0;
